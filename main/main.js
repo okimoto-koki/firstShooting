@@ -38,7 +38,7 @@ window.onload = function(){
 			},
 			remove: function(){
 				game.rootScene.removeChild(this);
-				delete enemies[this.key];
+				delete this;
 			}
 		});
 
@@ -54,12 +54,15 @@ window.onload = function(){
 					for(var i = 0 ; i < 5 ; i++){
 						if(this.within(enemies[i],10)){
 							enemies[i].remove();
-							game.rootScene.removeChild(this);
-							delete this;
+							this.remove();
 						}
 					}
 				});
             			game.rootScene.addChild(this);
+			},
+			remove: function(){
+				game.rootScene.removeChild(this);
+				delete this;
 			}
 		});
 
@@ -68,6 +71,12 @@ window.onload = function(){
 			enemies[i] = new Enemy(rand(200), rand(200));
 		}
 
+		game.rootScene.on('enterframe', function(){
+			//shoot bullet
+			if(game.input.a && game.frame % 6 ==0){
+				var bullet = new Bullet(player.x, player.y)
+			}
+		});
 
 		player.on('enterframe', function(){
 			//カーソルキー
@@ -77,17 +86,7 @@ window.onload = function(){
 			if (game.input.up) this.y -= 3;
 
 			this.frame = this.age / 10  % 3 + 33;
-
-
-			//shoot bullet
-			if(game.input.a && game.frame % 6 ==0){
-				var bullet = new Bullet(this.x, this.y)
-			}
 		});
-	
-		
-
-
 	}
 	game.start();
 };
