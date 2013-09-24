@@ -35,6 +35,10 @@ window.onload = function(){
 					this.x += 1;
 				});
 				game.rootScene.addChild(this);
+			},
+			remove: function(){
+				game.rootScene.removeChild(this);
+				delete enemies[this.key];
 			}
 		});
 
@@ -47,16 +51,22 @@ window.onload = function(){
           	 			this.tl.moveBy(0, -500, 60);
 
         				this.on('enterframe',function(){
-					if(this.within(enemy,10)){
-						game.rootScene.removeChild(enemy);
-						game.rootScene.removeChild(this);
+					for(var i = 0 ; i < 5 ; i++){
+						if(this.within(enemies[i],10)){
+							enemies[i].remove();
+							game.rootScene.removeChild(this);
+							delete this;
+						}
 					}
 				});
             			game.rootScene.addChild(this);
 			}
 		});
 
-		var enemy = new Enemy(0,0);
+		var enemies = [];
+		for(var i = 0 ; i < 5 ; i++){
+			enemies[i] = new Enemy(rand(200), rand(200));
+		}
 
 
 		player.on('enterframe', function(){
@@ -82,3 +92,6 @@ window.onload = function(){
 	game.start();
 };
 
+function rand(n){
+	return Math.floor(Math.random() * (n+1));
+} 

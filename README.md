@@ -1,1 +1,3 @@
-enchant.jsを使った初めてのシューティングゲーム作り
+*enchant.jsを使った初めてのシューティングゲーム作り
+なぜかenchant.js本体がaddされてない
+最上位フォルダにenchant.jsのbuildフォルダが必要←あとで直す
