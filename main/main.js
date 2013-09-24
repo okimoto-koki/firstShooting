@@ -25,6 +25,22 @@ window.onload = function(){
 		game.keybind(83, "c");	//s
 		game.keybind(87, "d");	//w
 
+		var Enemy =Class.create(Sprite, {
+			initialize: function(x, y){
+				Sprite.call(this, 32, 32);
+				this.image = game.assets["chara0.png"];
+				this.x = x;
+				this.y = y;
+				this.on("enterframe",function(){
+					this.x += 1;
+				});
+				game.rootScene.addChild(this);
+			}
+		});
+
+		var enemy = new Enemy(0,0);
+
+
 		player.on('enterframe', function(){
 			//カーソルキー
 			if (game.input.right) this.x += 3;
@@ -43,7 +59,7 @@ window.onload = function(){
           	 			bullet.tl.moveBy(0, -500, 60);
           	 			
 				bullet.on('enterframe',function(){
-					if(this.intersect(enemy)){
+					if(this.within(enemy,10)){
 						game.rootScene.removeChild(enemy);
 					}
 				});
@@ -56,7 +72,7 @@ window.onload = function(){
 				bullet2.moveTo(this.x + 14, this.y + 8); 
           	 			bullet2.tl.moveBy(0, -500, 60);
           	 			bullet2.on('enterframe',function(){
-					if(this.intersect(enemy)){
+					if(this.within(enemy,10)){
 						game.rootScene.removeChild(enemy);
 					}
 				});
@@ -66,20 +82,7 @@ window.onload = function(){
 	
 		
 
-		var Enemy =Class.create(Sprite, {
-			initialize: function(x, y){
-				Sprite.call(this, 32, 32);
-				this.image = game.assets["chara0.png"];
-				// this.x = x;
-				// this.y = y;
-				// this.on("enterframe",function(){
-				// 	this.x += 1;
-				// });
-				game.rootScene.addChild(this);
-			}
-		});
 
-		var enemy = new Enemy(0,0);
 	}
 	game.start();
 };
