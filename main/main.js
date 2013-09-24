@@ -8,11 +8,12 @@ window.onload = function(){
 
 	game.onload = function() {
 		player = new Sprite(32, 32);
+		
 
 		player.image = game.assets["chara0.png"];
 		player.frame = 34;
-		player.x = 0;
-		player.y = 0;
+		player.x = 240;
+		player.y = 150;
 
 
 		game.rootScene.addChild(player);
@@ -30,24 +31,56 @@ window.onload = function(){
 			if (game.input.left) this.x -= 3;
 			if (game.input.down) this.y += 3;
 			if (game.input.up) this.y -= 3;
-			
-			//wasd
-			if (game.input.a) this.x += 3;
-			if (game.input.b) this.x -= 3;
-			if (game.input.c) this.y += 3;
-			if (game.input.d) this.y -= 3;
 
 			this.frame = this.age / 10  % 3 + 33;
+
+			//shoot bullet
+			if(game.input.a && game.frame % 6 ==0){
+				bullet = new Sprite(16,16);
+				bullet.image = game.assets["graphic.png"];
+				bullet.frame = 13;
+				bullet.moveTo(this.x + 3, this.y + 8); 
+          	 			bullet.tl.moveBy(0, -500, 60);
+          	 			
+				bullet.on('enterframe',function(){
+					if(this.intersect(enemy)){
+						game.rootScene.removeChild(enemy);
+					}
+				});
+	
+            				game.rootScene.addChild(bullet);
+
+            				bullet2 = new Sprite(16,16);
+				bullet2.image = game.assets["graphic.png"];
+				bullet2.frame = 13;
+				bullet2.moveTo(this.x + 14, this.y + 8); 
+          	 			bullet2.tl.moveBy(0, -500, 60);
+          	 			bullet2.on('enterframe',function(){
+					if(this.intersect(enemy)){
+						game.rootScene.removeChild(enemy);
+					}
+				});
+            				game.rootScene.addChild(bullet2);
+			}
+		});
+	
+		
+
+		var Enemy =Class.create(Sprite, {
+			initialize: function(x, y){
+				Sprite.call(this, 32, 32);
+				this.image = game.assets["chara0.png"];
+				// this.x = x;
+				// this.y = y;
+				// this.on("enterframe",function(){
+				// 	this.x += 1;
+				// });
+				game.rootScene.addChild(this);
+			}
 		});
 
-
+		var enemy = new Enemy(0,0);
 	}
-
 	game.start();
 };
 
-var shoot function(){
-	shoot = new Sprite(16,16);
-	shoot.image = game.assets["graphic.png"];
-	shoot.frame = 1;
-}
