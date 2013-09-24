@@ -38,6 +38,24 @@ window.onload = function(){
 			}
 		});
 
+		var Bullet = Class.create(Sprite,{
+			initialize: function(x,y){
+				Sprite.call(this, 16, 16);
+				this.image = game.assets["graphic.png"];
+				this.frame = 13;
+				this.moveTo(x + 3, y + 8); 
+          	 			this.tl.moveBy(0, -500, 60);
+
+        				this.on('enterframe',function(){
+					if(this.within(enemy,10)){
+						game.rootScene.removeChild(enemy);
+						game.rootScene.removeChild(this);
+					}
+				});
+            			game.rootScene.addChild(this);
+			}
+		});
+
 		var enemy = new Enemy(0,0);
 
 
@@ -50,33 +68,10 @@ window.onload = function(){
 
 			this.frame = this.age / 10  % 3 + 33;
 
+
 			//shoot bullet
 			if(game.input.a && game.frame % 6 ==0){
-				bullet = new Sprite(16,16);
-				bullet.image = game.assets["graphic.png"];
-				bullet.frame = 13;
-				bullet.moveTo(this.x + 3, this.y + 8); 
-          	 			bullet.tl.moveBy(0, -500, 60);
-          	 			
-				bullet.on('enterframe',function(){
-					if(this.within(enemy,10)){
-						game.rootScene.removeChild(enemy);
-					}
-				});
-	
-            				game.rootScene.addChild(bullet);
-
-            				bullet2 = new Sprite(16,16);
-				bullet2.image = game.assets["graphic.png"];
-				bullet2.frame = 13;
-				bullet2.moveTo(this.x + 14, this.y + 8); 
-          	 			bullet2.tl.moveBy(0, -500, 60);
-          	 			bullet2.on('enterframe',function(){
-					if(this.within(enemy,10)){
-						game.rootScene.removeChild(enemy);
-					}
-				});
-            				game.rootScene.addChild(bullet2);
+				var bullet = new Bullet(this.x, this.y)
 			}
 		});
 	
