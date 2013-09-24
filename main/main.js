@@ -8,8 +8,6 @@ window.onload = function(){
 
 	game.onload = function() {
 		player = new Sprite(32, 32);
-		
-
 		player.image = game.assets["chara0.png"];
 		player.frame = 34;
 		player.x = 240;
@@ -79,14 +77,17 @@ window.onload = function(){
 		});
 
 		player.on('enterframe', function(){
-			//カーソルキー
+			//カーソルキー移動
 			if (game.input.right) this.x += 3;
 			if (game.input.left) this.x -= 3;
 			if (game.input.down) this.y += 3;
 			if (game.input.up) this.y -= 3;
-
+			//アニメーション
 			this.frame = this.age / 10  % 3 + 33;
+			if(this.within(enemies[1], 40)) { alert("hit!"); }
 		});
+
+
 	}
 	game.start();
 };
