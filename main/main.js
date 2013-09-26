@@ -39,6 +39,7 @@ window.onload = function(){
                 
                 //敵の動き
 				this.on("enterframe",function(){
+                    this.tl.moveBy(rand(50),rand(50),rand(90));
 				});				
                 game.rootScene.addChild(this);                
                 //範囲外で消失
@@ -84,12 +85,22 @@ window.onload = function(){
 				delete this;
 			}
 		});
-
+        
+        var PlayerBullet = Class.create(Bullet,{
+           initialize: function(x,y){
+                Bullet.call(this,16,16); 
+                this.image = game.assets["graphic.png"];
+                this.frame = 13;                
+                //弾の動き
+                this.moveTo(x + 3, y + 8); 
+                this.tl.moveBy(0, -500, 60);
+           }
+        });
 
 		game.rootScene.on('enterframe', function(){
 			//shoot bullet
 			if(game.input.a && game.frame % 6 ==0){
-				var bullet = new Bullet(player.x, player.y)
+				var playerBullet = new PlayerBullet(player.x, player.y)
 			}
 			//敵の出現管理 
 			if(game.frame % 60 == 0){
