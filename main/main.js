@@ -12,6 +12,7 @@ window.onload = function(){
 		player.frame = 34;
 		player.x = 240;
 		player.y = 150;
+        		enemies = new Array();
 
 
 		game.rootScene.addChild(player);
@@ -30,13 +31,13 @@ window.onload = function(){
 				this.x = x;
 				this.y = y;
 				this.on("enterframe",function(){
-					this.x += 1;
+					// this.x += 1;
 				});
 				game.rootScene.addChild(this);
 			},
 			remove: function(){
 				game.rootScene.removeChild(this);
-				delete this;
+				delete enemies[this.key];
 			}
 		});
 
@@ -48,14 +49,17 @@ window.onload = function(){
 				this.moveTo(x + 3, y + 8); 
           	 			this.tl.moveBy(0, -500, 60);
 
-        				this.on('enterframe',function(){
-					for(var i = 0 ; i < 5 ; i++){
-						if(this.within(enemies[i],10)){
-							enemies[i].remove();
-							this.remove();
-						}
-					}
-				});
+        				this.addEventListener('enterframe', function () {
+
+        				//hit hantei
+          			 	for (var i in enemies) {
+          			 		//within de difficult
+              				if(enemies[i].within(this,10)) {
+                    					this.remove();
+                 			 		enemies[i].remove();
+                				}
+            				}
+        			});
             			game.rootScene.addChild(this);
 			},
 			remove: function(){
@@ -64,16 +68,19 @@ window.onload = function(){
 			}
 		});
 
-		var enemies = [];
-		for(var i = 0 ; i < 5 ; i++){
-			enemies[i] = new Enemy(rand(200), rand(200));
-		}
+		
 
 		game.rootScene.on('enterframe', function(){
 			//shoot bullet
 			if(game.input.a && game.frame % 6 ==0){
 				var bullet = new Bullet(player.x, player.y)
 			}
+			//enemy 
+			if(game.frame %60 == 0){
+			var enemy = new Enemy(rand(100), rand(50) );
+              		enemy.key = game.frame;
+              		enemies[game.frame] = enemy;
+              		}	
 		});
 
 		player.on('enterframe', function(){
@@ -84,7 +91,6 @@ window.onload = function(){
 			if (game.input.up) this.y -= 3;
 			//アニメーション
 			this.frame = this.age / 10  % 3 + 33;
-			if(this.within(enemies[1], 40)) { alert("hit!"); }
 		});
 
 
