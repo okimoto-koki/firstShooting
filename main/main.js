@@ -18,6 +18,11 @@ window.onload = function(){
 		player.y = 150;
 		enemies = new Array();
 		game.score = 0;
+		
+		// ライフバー
+        var lifeLabel = new LifeLabel(10, 30, 5);
+        lifeLabel.life = 3;
+        game.rootScene.addChild(lifeLabel);
 
 
 		game.rootScene.addChild(player);
@@ -111,7 +116,7 @@ window.onload = function(){
 				this.on('enterframe', function(){
 					if(player.within(this,5)) {
 						this.remove();
-						game.score -= 100;
+						 lifeLabel.life -= 1;
 					}	
 				});
 			}
@@ -137,6 +142,12 @@ window.onload = function(){
 				enemy.key = game.frame;
 				enemies[game.frame] = enemy;
 			}   
+			
+			//ゲームオーバー処理
+			if(lifeLabel.life == 0){
+                game.end(game.score, "SCORE: " + game.score)	
+			}
+			
 			//スコア表示
 			scoreLabel.score = game.score;
 		});
@@ -163,9 +174,10 @@ window.onload = function(){
 			this.frame = this.age / 10  % 3 + 33;
 			//当たり判定
 			for (var i in enemies) {
-				//withinで当たり判定を調節 敵に当たると−１００点
+				//withinで当たり判定を調節 敵に当たると−１機
 				if(enemies[i].within(this,5)) {
-					game.score -= 100;
+					lifeLabel.life -= 1;
+					enemies[i].remove();
 				}
 			}
 		});
