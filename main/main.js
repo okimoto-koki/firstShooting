@@ -37,15 +37,21 @@ window.onload = function(){
 				this.x = x;
 				this.y = y;
 				
-				//敵の動き
 				this.on("enterframe",function(){
-					this.tl.moveBy(rand(50),rand(50),rand(90));
+					//敵の動き
+					this.tl.moveBy(rand(50,-50),rand(50,0),rand(90,30));
+					
+					//敵弾
+					if(this.age % 30 == 0){
+						var enemyBullet = new EnemyBullet(this.x, this.y);	
+					}
+					
 				});             
-				game.rootScene.addChild(this);                
 				//範囲外で消失
-				if(this.x<0 || this.x>width || this.y<0 || this.y>height){
+				if(this.x<0 || this.x>width || this.y<-50 || this.y>height){
 					this.remove();
 				};
+				game.rootScene.addChild(this);                
 			},            
 			remove: function(){
 				game.rootScene.removeChild(this);
@@ -57,6 +63,7 @@ window.onload = function(){
 		var Bullet = Class.create(Sprite,{
 			initialize: function(x,y){
 				Sprite.call(this, 16, 16);
+				this.image = game.assets["graphic.png"];
 				this.addEventListener('enterframe', function () {
 					//範囲外で消失
 					if(this.x<0 || this.x>width || this.y<0 || this.y>height){
@@ -75,8 +82,7 @@ window.onload = function(){
 		var PlayerBullet = Class.create(Bullet,{
 		   initialize: function(x,y){
 				Bullet.call(this,16,16); 
-				this.image = game.assets["graphic.png"];
-				this.frame = 13;                
+				this.frame = 12;                
 				//弾の動き
 				this.moveTo(x+3, y+8); 
 				this.tl.moveBy(0, -500, 60);
@@ -94,31 +100,40 @@ window.onload = function(){
 			}
 		});
 		
+		//敵用弾
 		var EnemyBullet = Class.create(Bullet,{
 			initialize: function(x,y){
 				Bullet.call(this,16,16); 
-				this.image = game.assets["graphic.png"];
-				this.frame = 14;                
+				this.frame = 13;                
 				//弾の動き
-				this.moveTo(x+3, y-8); 
+				this.moveTo(x+8, y+25); 
 				this.tl.moveBy(0, 500, 180);
-				if(player.within(this,10)) {
-					this.remove();
-					game.score -= 100;
-				}
+				this.on('enterframe', function(){
+					if(player.within(this,5)) {
+						this.remove();
+						game.score -= 100;
+					}	
+				});
 			}
 		});
 
 		game.rootScene.on('enterframe', function(){
 			//shoot bullet
 			if(game.input.a && game.frame % 6 ==0){
-				var playerBullet1 = new EnemyBullet(player.x + 10, player.y)
+				var playerBullet1 = new PlayerBullet(player.x + 10, player.y)
 				var playerBullet2 = new PlayerBullet(player.x, player.y)
+			}
+		
+			//特殊キーでスロー効果
+			if(game.input.b){
+				game.fps = 15;	
+			}else{
+				game.fps = 60;
 			}
 			
 			//敵の出現管理 
 			if(game.frame % 30 == 0){
-				var enemy = new Enemy(rand(310), rand(150));
+				var enemy = new Enemy(rand(310,0), -30);
 				enemy.key = game.frame;
 				enemies[game.frame] = enemy;
 			}   
@@ -132,16 +147,24 @@ window.onload = function(){
 		
 		player.on('enterframe', function(){
 			//カーソルキー移動
-			if (game.input.right) this.x += 3;
-			if (game.input.left) this.x -= 3;
-			if (game.input.down) this.y += 3;
-			if (game.input.up) this.y -= 3;
+			if(game.input.c){
+				if (game.input.right) this.x += 0.8;
+				if (game.input.left) this.x -= 0.8;
+				if (game.input.down) this.y += 0.8;
+				if (game.input.up) this.y -= 0.8;
+			}else{
+				if (game.input.right) this.x += 2;
+				if (game.input.left) this.x -= 2;
+				if (game.input.down) this.y += 2;
+				if (game.input.up) this.y -= 2;
+			}
+				
 			//アニメーション
 			this.frame = this.age / 10  % 3 + 33;
 			//当たり判定
 			for (var i in enemies) {
 				//withinで当たり判定を調節 敵に当たると−１００点
-				if(enemies[i].within(this,10)) {
+				if(enemies[i].within(this,5)) {
 					game.score -= 100;
 				}
 			}
@@ -150,6 +173,6 @@ window.onload = function(){
 	game.start();
 };
 
-function rand(n){
-	return Math.floor(Math.random() * (n+1));
+function rand(max,min){
+	return Math.floor(Math.random() * (max - min) + min);
 } 
