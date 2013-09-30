@@ -10,27 +10,36 @@ window.onload = function(){
 	game.preload('chara0.png');
 	game.preload('graphic.png');
 	game.preload('avatarBg1.png');
+	game.preload('bar.png')
 
 	game.onload = function() {
 		player = new Sprite(32, 32);
 		player.image = game.assets["chara0.png"];
 		player.frame = 34;
-		player.x = 240;
-		player.y = 150;
+		player.x = 150;
+		player.y = 280;
 		enemies = new Array();
 		game.score = 0;
 		
-		// 地上のマップ（画像）を設定
-		var map = new Sprite(320, 320);
-		map.image = game.assets["avatarBg1.png"];
-		map.frame = 2;
-		map.y = -map.height + game.height;
-		game.rootScene.addChild(map);
+//		// 地上のマップ（画像）を設定
+//		var map = new Sprite(320, 320);
+//		map.image = game.assets["avatarBg1.png"];
+//		map.frame = 2;
+//		map.y = -map.height + game.height;
+//		game.rootScene.addChild(map);
 		
 		// ライフバー
         var lifeLabel = new LifeLabel(10, 30, 5);
         lifeLabel.life = 3;
         game.rootScene.addChild(lifeLabel);
+		
+		// 特殊バー
+        var bar = new Bar(10, 45);
+        bar.image = game.assets["bar.png"];
+        bar.maxvalue = 150;
+        bar.value = 0;
+        
+        game.rootScene.addChild(bar);
 
 
 		game.rootScene.addChild(player);
@@ -79,7 +88,7 @@ window.onload = function(){
 				this.image = game.assets["graphic.png"];
 				this.addEventListener('enterframe', function () {
 					//範囲外で消失
-					if(this.x<0 || this.x>width || this.y<0 || this.y>height){
+					if(this.x<0 || this.x>width || this.y<-10 || this.y>height){
 						this.remove();
 					};
 				});    
@@ -107,6 +116,8 @@ window.onload = function(){
 							this.remove();
 							enemies[i].remove();
 							game.score += 100;
+							//敵を倒した時特殊バー回復
+							if(game.input.b || bar.value > bar.maxvalue){}else{bar.value += 10;}
 						}
 					}
 				});
@@ -137,9 +148,10 @@ window.onload = function(){
 				var playerBullet2 = new PlayerBullet(player.x, player.y)
 			}
 		
-			//特殊キーでスロー効果
-			if(game.input.b){
-				game.fps = 15;	
+			//特殊キーでスロー効果 スロー中はゲージ消費　０で強制終了
+			if(bar.value > 0 && game.input.b){
+					game.fps = 15;
+					bar.value -= 1;
 			}else{
 				game.fps = 60;
 			}
