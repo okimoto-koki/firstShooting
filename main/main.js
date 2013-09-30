@@ -131,7 +131,7 @@ window.onload = function(){
 				this.frame = 13;                
 				//弾の動き
 				this.moveTo(x+8, y+25); 
-				this.tl.moveBy(0, 500, 180);
+				this.tl.moveBy(rand(320,-320), 500, 200);
 				this.on('enterframe', function(){
 					if(player.within(this,5)) {
 						this.remove();
@@ -205,6 +205,7 @@ window.onload = function(){
 	game.start();
 };
 
+//整数を引数に乱数（maxからminの間）を返す
 function rand(max,min){
 	return Math.floor(Math.random() * (max - min) + min);
 } 
