@@ -9,6 +9,7 @@ window.onload = function(){
 	game.fps = 60;
 	game.preload('chara0.png');
 	game.preload('graphic.png');
+	game.preload('avatarBg1.png');
 
 	game.onload = function() {
 		player = new Sprite(32, 32);
@@ -18,6 +19,13 @@ window.onload = function(){
 		player.y = 150;
 		enemies = new Array();
 		game.score = 0;
+		
+		// 地上のマップ（画像）を設定
+		var map = new Sprite(320, 320);
+		map.image = game.assets["avatarBg1.png"];
+		map.frame = 2;
+		map.y = -map.height + game.height;
+		game.rootScene.addChild(map);
 		
 		// ライフバー
         var lifeLabel = new LifeLabel(10, 30, 5);
